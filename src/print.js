@@ -797,7 +797,7 @@ function link(node, id, options, doHighlight) {
 }
 
 function anchorize(title) {
-  return title.replace(/[^A-Za-z0-9\-_]+/g, '-');
+  return title.replace(/[^A-Za-z0-9\-_@]+/g, '-');
 }
 
 function resolveLinkUrl(url, options) {

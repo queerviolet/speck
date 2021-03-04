@@ -329,7 +329,14 @@ htmlTag = tag:$('<' '/'? [a-z]+ [^>]* '>') {
   };
 }
 
-reference = '{' !('++'/'--') _ ref:(call / value / token)? _ close:'}'? {
+directive = '@' name:name {
+  return {
+    type: 'Variable',
+    name: '@' + name
+  }
+}
+
+reference = '{' !('++'/'--') _ ref:(directive / call / value / token)? _ close:'}'? {
   if (ref === null || close === null) {
     error('Malformed {reference}.');
   }
