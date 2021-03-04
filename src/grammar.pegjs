@@ -74,57 +74,63 @@ sectionID = start:$sectionIDStart rest:('.' $sectionIDPart)* '.' {
 sectionIDStart = [0-9]+ / [A-Z]+ / '*'
 sectionIDPart = [0-9]+ / '*'
 
-section1 = BLOCK H1 secID:sectionID? _ title:headerText H_END contents:section1Content* {
+section1 = BLOCK H1 definition:'!'? secID:sectionID? _ title:headerText H_END contents:section1Content* {
   return {
     type: 'Section',
     secID: secID,
     title: title,
-    contents: contents
+    contents: contents,
+    definition: !!definition,
   };
 }
 
-section2 = BLOCK H2 secID:sectionID? _ title:headerText H_END contents:section2Content* {
+section2 = BLOCK H2 definition:'!'? secID:sectionID? _ title:headerText H_END contents:section2Content* {
   return {
     type: 'Section',
     secID: secID,
     title: title,
-    contents: contents
+    contents: contents,
+    definition: !!definition,
   };
 }
 
-section3 = BLOCK H3 secID:sectionID? _ title:headerText H_END contents:section3Content* {
+section3 = BLOCK H3 definition:'!'? secID:sectionID? _ title:headerText H_END contents:section3Content* {
   return {
     type: 'Section',
     secID: secID,
     title: title,
-    contents: contents
+    contents: contents,
+    definition: !!definition,
   };
 }
 
-section4 = BLOCK H4 secID:sectionID? _ title:headerText H_END contents:section4Content* {
+section4 = BLOCK H4 definition:'!'? secID:sectionID? _ title:headerText H_END contents:section4Content* {
   return {
     type: 'Section',
     secID: secID,
     title: title,
-    contents: contents
+    contents: contents,
+    definition: !!definition,
   };
 }
 
-section5 = BLOCK H5 secID:sectionID? _ title:headerText H_END contents:section5Content* {
+section5 = BLOCK H5 definition:'!'? secID:sectionID? _ title:headerText H_END contents:section5Content* {
   return {
     type: 'Section',
     secID: secID,
     title: title,
-    contents: contents
+    contents: contents,
+    definition: !!definition,
   };
 }
 
-section6 = BLOCK H6 secID:sectionID? _ title:headerText H_END contents:section6Content* {
+section6 = BLOCK H6 definition:'!'? secID:sectionID? _ title:headerText H_END contents:section6Content* {
   return {
     type: 'Section',
     secID: secID,
     title: title,
-    contents: contents
+    contents: contents,
+    definition: !!definition,
   };
 }
 

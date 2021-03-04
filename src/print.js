@@ -190,6 +190,7 @@ function assignBiblioIDs(ast, options) {
   const secnames = {};
   const conflicts = {};
   const secnameStack = [];
+  const defnameStack = [];
   visit(ast, function (node) {
     if (node.type === 'Section') {
       const secname = anchorize(node.title);
@@ -209,7 +210,10 @@ function assignBiblioIDs(ast, options) {
         if (conflicts.hasOwnProperty(secname)) {
           secname = secnameStack[secnameStack.length - 1] + '.' + secname;
         }
-        let id = 'sec-' + secname;
+        let id = node.definition
+          ? (defnameStack.push(anchorize(node.title)),
+            defnameStack.join('/'))
+          : 'sec-' + secname;
         if (!options.biblio[id]) {
           options.biblio[id] = '#' + id;
         }
@@ -274,6 +278,8 @@ function assignBiblioIDs(ast, options) {
     leave: function (node) {
       if (node.type === 'Section') {
         secnameStack.pop();
+        if (node.definition)
+          defnameStack.pop();
       }
     }
   });
