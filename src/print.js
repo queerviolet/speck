@@ -469,17 +469,7 @@ function printAll(list, options) {
           return '<del>' + join(node.contents) + '</del>';
 
         case 'Code':
-          return (
-            '<pre' +
-              (node.id ? ' id="' + node.id + '"' : '') +
-              (node.counter ? ' class="spec-counter-example"' : node.example ? ' class="spec-example"' : '') +
-              (node.lang ? ' data-language="' + node.lang + '"' : '') +
-            '>' +
-            (node.example ? link({name: (node.counter ? 'Counter Example № ' : 'Example № ') + node.number}, node.id, options) : '') +
-            '<code>' +
-              options.highlight(node.code, node.lang) +
-            '</code></pre>\n'
-          );
+          return printCode(node, options);
 
         case 'InlineCode':
           return '<code>' + escapeCode(node.code) + '</code>';
@@ -678,6 +668,34 @@ function printAll(list, options) {
 
     }
   }));
+}
+
+function printCode(node, options) {
+  if (node.isDiagram && node.lang === 'html') {
+    return '<figure' +
+      (node.id ? ' id="' + node.id + '"' : '') +
+      (node.counter ? ' class="spec-counter-example"' : node.example ? ' class="spec-example"' : '') +
+      (node.lang ? ' data-language="' + node.lang + '"' : '') +
+    '>' +
+    (
+      node.title
+        ? '<figcaption>' + printContent(node.title) + '</figcaption>'
+        : ''
+    ) +
+    node.code +
+    '</figure>'
+  }
+  return (
+    '<pre' +
+      (node.id ? ' id="' + node.id + '"' : '') +
+      (node.counter ? ' class="spec-counter-example"' : node.example ? ' class="spec-example"' : '') +
+      (node.lang ? ' data-language="' + node.lang + '"' : '') +
+    '>' +
+    (node.example ? link({name: (node.counter ? 'Counter Example № ' : 'Example № ') + node.number}, node.id, options) : '') +
+    '<code>' +
+      options.highlight(node.code, node.lang) +
+    '</code></pre>\n'
+  );
 }
 
 function getTerms(ast) {

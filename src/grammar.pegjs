@@ -337,7 +337,9 @@ inlineCode = '`' code:$[^`\n\r]+ '`' {
   };
 }
 
-blockCode = BLOCK '```' raw:('raw' WB _)? deprecatedCounterExample:'!'? lang:codeLang? _ example:('example'/'counter-example')? NL code:$([^`] / '`' [^`] / '``' [^`])+ '```' {
+caption = '--' contents:linkContent+ { return contents }
+
+blockCode = BLOCK '```' raw:('raw' WB _)? deprecatedCounterExample:'!'? lang:codeLang? _ example:('example'/'counter-example'/'definition'/'diagram')? _ title:caption? NL code:$([^`] / '`' [^`] / '``' [^`])+ '```' {
   // dedent codeblock by current indent level?
   if (deprecatedCounterExample) {
     console.warn(line() + ':' + column() + ': Use of `!` is deprecated, use `counter-example` instead.');
@@ -346,9 +348,12 @@ blockCode = BLOCK '```' raw:('raw' WB _)? deprecatedCounterExample:'!'? lang:cod
     type: 'Code',
     raw: raw !== null,
     lang: lang,
-    example: example !== null,
+    diagram: example === 'diagram',
+    example: example !== null && example !== 'definition',
     counter: example === 'counter-example' || deprecatedCounterExample !== null,
-    code: code
+    definition: example === 'definition',
+    title: title,
+    code: code,
   };
 }
 
