@@ -468,15 +468,18 @@ pre > code {
 
 pre {
   background: #FAFAFA;
-  border-left: solid 4px #E9E9E9;
-  margin: 1rem -1rem;
   min-width: 70vw;
-  padding: 12px 1rem 12px calc(1rem - 4px);
   width: -moz-fit-content;
   width: -webkit-fit-content;
   width: fit-content;
   max-width: calc(100vw - 2rem);
   overflow-y: scroll;
+}
+
+figure {
+  border-left: solid 4px #E9E9E9;
+  margin: 1rem -1rem;
+  padding: 12px 1rem 12px calc(1rem - 4px);
 }
 
 @media (min-width: 720px) {
@@ -497,15 +500,19 @@ pre {
   padding-top: 8px;
 }
 
-.spec-example > a,
-.spec-counter-example > a {
-  display: block;
+figcaption {
   font: italic 11pt/18pt Cambria, "Palatino Linotype", Palatino, "Liberation Serif", serif;
+  text-align: right;
+}
+
+.spec-example-num {
+  display: block;
+  float: left;
   opacity: 0.6;
   user-select: none;
 }
 
-.spec-counter-example > a {
+.spec-counter-example > figcaption > a {
   color: #98593b;
 }
 

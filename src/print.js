@@ -245,7 +245,20 @@ function assignBiblioIDs(ast, options) {
         }
         node.id = id;
       }
-      if (node.type === 'Code' && node.example) {
+      if (node.type === 'Code') {
+        if (node.title) {
+          const baseId = anchorize(
+            (node.example ? 'example-' : 'fig-') +
+            textContent(node.title).trim()
+          );
+          let id = baseId
+          for (const i = 2; options.biblio[id]; ++i) {
+            id = baseId + '-' + i
+          }
+          options.biblio[id] = '#' + id;
+          node.id = id;
+          return
+        }
         let id;
         let hash = '';
         do {
@@ -385,6 +398,12 @@ function printSidebar(ast, options) {
   );
 }
 
+function textContent(input, separator = ' ') {
+  if (!input) return ''
+  if (typeof input === 'string') return input
+  if (Array.isArray(input)) return input.map(textContent).join(' ')
+  return textContent(input.title || input.contents || input.name || input.value)
+}
 
 // Content
 
@@ -677,31 +696,30 @@ function printAll(list, options) {
 }
 
 function printCode(node, options) {
-  if (node.isDiagram && node.lang === 'html') {
-    return '<figure' +
+  return '<figure' +
       (node.id ? ' id="' + node.id + '"' : '') +
       (node.counter ? ' class="spec-counter-example"' : node.example ? ' class="spec-example"' : '') +
       (node.lang ? ' data-language="' + node.lang + '"' : '') +
     '>' +
-    (
-      node.title
-        ? '<figcaption>' + printContent(node.title) + '</figcaption>'
-        : ''
-    ) +
-    node.code +
+    printCaption(node, options) +
+    ((node.diagram && node.lang === 'html')
+        ? node.code
+        : '<pre><code>' +
+          options.highlight(node.code, node.lang) +
+        '</code></pre>\n') +
     '</figure>'
-  }
-  return (
-    '<pre' +
-      (node.id ? ' id="' + node.id + '"' : '') +
-      (node.counter ? ' class="spec-counter-example"' : node.example ? ' class="spec-example"' : '') +
-      (node.lang ? ' data-language="' + node.lang + '"' : '') +
-    '>' +
-    (node.example ? link({name: (node.counter ? 'Counter Example № ' : 'Example № ') + node.number}, node.id, options) : '') +
-    '<code>' +
-      options.highlight(node.code, node.lang) +
-    '</code></pre>\n'
-  );
+}
+
+function printCaption(node, options) {
+  if (!node.example && !node.title) return ''
+  const example = node.example
+    ? '<span class="spec-example-num">' + (
+      node.counter ? 'Counter Example № ' : 'Example № '
+      ) +  node.number + '</span>'
+    : ''
+  const title = printAll(node.title || [])
+
+  return '<figcaption>' + linkTo(node.id, example + title, options) + '</figcaption>'
 }
 
 function getTerms(ast) {
@@ -790,6 +808,16 @@ function link(node, id, options, doHighlight) {
   return (
     '<a href="' + href + '"' +
       (doHighlight ? ' data-name="' + anchorize(node.name) + '"' : '') +
+      (href[0] !== '#' ? ' target="_blank"' : '') + '>' +
+      content +
+    '</a>'
+  );
+}
+
+function linkTo(id, content, options) {
+  const href = options.biblio[id];
+  return (
+    '<a href="' + href + '"' +
       (href[0] !== '#' ? ' target="_blank"' : '') + '>' +
       content +
     '</a>'

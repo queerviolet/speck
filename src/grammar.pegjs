@@ -357,13 +357,14 @@ blockCode = BLOCK '```' raw:('raw' WB _)? deprecatedCounterExample:'!'? lang:cod
   if (deprecatedCounterExample) {
     console.warn(line() + ':' + column() + ': Use of `!` is deprecated, use `counter-example` instead.');
   }
+  const counter = (example === 'counter-example' || deprecatedCounterExample !== null)
   return {
     type: 'Code',
     raw: raw !== null,
     lang: lang,
     diagram: example === 'diagram',
-    example: example !== null && example !== 'definition',
-    counter: example === 'counter-example' || deprecatedCounterExample !== null,
+    example: counter || example === 'example',
+    counter: counter,
     definition: example === 'definition',
     title: title,
     code: code,
