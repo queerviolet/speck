@@ -3,6 +3,7 @@
   font-family: Cambria, "Palatino Linotype", Palatino, "Liberation Serif", serif;
   font-size: 15px;
   line-height: 1.5;
+  --mono-font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
   --mono-font-size: 13px;
   --indent: 1rem;
   --list-indent: 1.5rem;
@@ -445,7 +446,7 @@ footer {
 /* Code */
 
 pre, code {
-  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  font-family: var(--mono-font-family);
   font-size: var(--mono-font-size);
   font-weight: inherit;
 }
