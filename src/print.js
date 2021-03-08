@@ -110,7 +110,8 @@ function printBody(ast, options) {
     '<footer>\n' +
       'Written in <a href="https://spec-md.com" target="_blank">Spec Markdown</a>.' +
     '</footer>\n' +
-    printSidebar(ast, options)
+    printSidebar(ast, options) +
+    execStaticJS('generated/mermaid.js')
   );
 }
 
@@ -429,7 +430,7 @@ function printAll(list, options) {
           const secID = join(node.secID, '.');
           return (
             '<section id="' + node.id + '" secid="' + secID + '">\n' +
-              '<h' + level + '>' +
+              '<h' + level + (node.definition ? ' class="spec-definition-head">' : '>') +
               '<span class="spec-secid" title="link to this section">' +
                 '<a href="' + options.biblio[node.id] + '">' + secID + '</a>' +
               '</span>' +
@@ -696,30 +697,40 @@ function printAll(list, options) {
 }
 
 function printCode(node, options) {
+  if (node.raw && node.lang === 'html')
+    return node.code
   return '<figure' +
       (node.id ? ' id="' + node.id + '"' : '') +
       (node.counter ? ' class="spec-counter-example"' : node.example ? ' class="spec-example"' : '') +
-      (node.lang ? ' data-language="' + node.lang + '"' : '') +
     '>' +
-    printCaption(node, options) +
-    ((node.diagram && node.lang === 'html')
-        ? node.code
-        : '<pre><code>' +
-          options.highlight(node.code, node.lang) +
-        '</code></pre>\n') +
+      printFigCaption(node, options) +
+      printFigBody(node, options) +
     '</figure>'
 }
 
-function printCaption(node, options) {
+function printFigCaption(node, options) {
   if (!node.example && !node.title) return ''
   const example = node.example
     ? '<span class="spec-example-num">' + (
       node.counter ? 'Counter Example № ' : 'Example № '
       ) +  node.number + '</span>'
     : ''
-  const title = printAll(node.title || [])
+  const title = join(node.title)
 
   return '<figcaption>' + linkTo(node.id, example + title, options) + '</figcaption>'
+}
+
+function printFigBody(node, options) {
+  if (node.diagram) {
+    if (node.lang === 'html')
+      return node.code
+    if (node.lang === 'mermaid')
+      return `<div class=mermaid>${node.code}</div>`
+  }
+
+  return `<pre${node.lang ? ` class="${node.lang}" data-language="${node.lang}"` : ''}><code>` +
+    options.highlight(node.code, node.lang) +
+  '</code></pre>\n'
 }
 
 function getTerms(ast) {

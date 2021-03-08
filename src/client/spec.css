@@ -149,6 +149,14 @@ h1, h2, h3, h4, h5, h6 {
   position: relative;
 }
 
+.spec-definition-head {
+  font-family: var(--mono-font-family);
+}
+
+.spec-definition-head > .spec-secid {
+  font-family: var(--body-font-family);
+}
+
 @media (min-width: 720px) {
   header > h1 {
     margin: 6em 0 3em;
@@ -484,6 +492,11 @@ figure {
   border-left: solid 4px #E9E9E9;
   margin: 1rem -1rem;
   padding: 12px 1rem 12px calc(1rem - 4px);
+}
+
+.mermaid > svg {
+  display: block;
+  margin: auto;
 }
 
 @media (min-width: 720px) {
