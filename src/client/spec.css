@@ -9,6 +9,8 @@
   --indent: 1rem;
   --list-indent: 1.5rem;
   --grammar-indent: 0rem;
+  --highlight-background: #FBF8D0;
+  --highlight-border-color: transparent;
 }
 
 @media (min-width: 720px) {
@@ -622,8 +624,9 @@ var {
 }
 
 *[data-name] {
-  transition: 0.15s background ease-out;
+  transition: 0.15s background ease-out, 0.15s border-color ease-out;
   border-radius: 2px;
+  border: 1px solid transparent;
   padding: 0 3px;
   margin: 0 -3px;
 }
