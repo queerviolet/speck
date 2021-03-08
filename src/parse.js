@@ -1,9 +1,10 @@
 'use strict';
 
-const fs = require('fs');
 const path = require('path');
 const grammar = require('./generated/grammar');
 const visit = require('./visit');
+const readFile = require('./file');
+const importFigure = require('./figure');
 
 
 module.exports = parse;
@@ -12,19 +13,12 @@ async function parse(filepath) {
   return await importAST(filepath, 'initialDocument');
 }
 
-function readFile(filepath) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(filepath, { encoding: 'utf8' }, (err, result) =>
-      err ? reject(err) : resolve(result)
-    );
-  });
-}
-
 async function importAST(filepath, startRule) {
   const source = await readFile(filepath)
   try {
     const ast = grammar.parse(source, { startRule });
     const importASTs = [];
+    const importFigures = []
     visit(ast, function (node) {
       if (node.type === 'Import') {
         const subfilepath = path.resolve(
@@ -33,8 +27,13 @@ async function importAST(filepath, startRule) {
         );
         importASTs.push(importAST(subfilepath, 'importedDocument'));
       }
+      if (node.type === 'ImportFigure') {
+        const url = new URL('file://' + path.dirname(filepath) + '/' + node.path)
+        importFigures.push(importFigure(node, url))
+      }
     });
     const asts = await Promise.all(importASTs);
+    await Promise.all(importFigures);
     return flattenDocuments(ast, asts);
   } catch (error) {
     if (error && error.line) {

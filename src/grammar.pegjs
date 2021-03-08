@@ -158,6 +158,7 @@ sectionContent = note
                / todo
                / indentCode
                / blockCode
+               / importFigure
                / algorithm
                / semantic
                / production
@@ -169,6 +170,16 @@ sectionContent = note
 
 
 // Import
+
+importFigure = BLOCK '===' link:link _ example:('example'/'counter-example')? &( BLOCK / EOF ) {
+  return {
+    type: 'ImportFigure',
+    path: link.url,
+    title: link.contents,
+    example: example !== null,
+    counter: example === 'counter-example'
+  }
+}
 
 importLink = link:link &( BLOCK / EOF ) &{
   return link.url.slice(-3) === '.md' && !/^\/([a-z]*:\/\/)/.test(link.url);

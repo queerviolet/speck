@@ -24,6 +24,7 @@
     "watch": "nodemon -e css,js,json,pegjs,md --ignore src/generated --exec 'npm run build && npm test'"
   },
   "dependencies": {
+    "graphql": "^15.5.0",
     "prismjs": "^1.23.0"
   },
   "devDependencies": {
