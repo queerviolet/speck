@@ -1,8 +1,9 @@
 :root {
   color: #333333;
-  font-family: Cambria, "Palatino Linotype", Palatino, "Liberation Serif", serif;
+  font-family: var(--body-font-family);
   font-size: 15px;
   line-height: 1.5;
+  --body-font-family: var(--body-font-family);
   --mono-font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
   --mono-font-size: 13px;
   --indent: 1rem;
@@ -110,7 +111,7 @@ article {
 
 .outdated-selection-link:hover:after {
   content: "This selection content has changed since this link was created.";
-  font: 9pt/11pt Cambria, "Palatino Linotype", Palatino, "Liberation Serif", serif;
+  font: 9pt/11pt var(--body-font-family);
   position: absolute;
   display: block;
   white-space: nowrap;
@@ -407,7 +408,7 @@ footer {
 .spec-note > a:first-child {
   color: #6C6613;
   display: block;
-  font: italic 11pt/18pt Cambria, "Palatino Linotype", Palatino, "Liberation Serif", serif;
+  font: italic 11pt/18pt var(--body-font-family);
   opacity: 0.6;
   user-select: none;
 }
@@ -501,7 +502,7 @@ figure {
 }
 
 figcaption {
-  font: italic 11pt/18pt Cambria, "Palatino Linotype", Palatino, "Liberation Serif", serif;
+  font: italic 11pt/18pt var(--body-font-family);
   text-align: right;
 }
 
@@ -595,7 +596,7 @@ del {
 }
 
 .spec-string {
-  font-family: Consolas, Monaco, monospace;
+  font-family: var(--mono-font-family);
   font-size: 85%;
   white-space: pre;
 }
@@ -811,7 +812,7 @@ var {
 .spec-butnot::before {
   color: #666666;
   content: 'but not';
-  font-family: Cambria, "Palatino Linotype", Palatino, "Liberation Serif", serif;
+  font-family: var(--body-font-family);
   font-weight: normal;
   margin-right: 1ex;
 }
@@ -819,7 +820,7 @@ var {
 .spec-butnot > *:not(:first-child)::before {
   color: #666666;
   content: 'or';
-  font-family: Cambria, "Palatino Linotype", Palatino, "Liberation Serif", serif;
+  font-family: var(--body-font-family);
   font-weight: normal;
   margin-right: 1ex;
 }
@@ -836,7 +837,7 @@ var {
 .spec-lookahead > *:not(:first-child)::before {
   color: #666666;
   content: ', ';
-  font-family: Cambria, "Palatino Linotype", Palatino, "Liberation Serif", serif;
+  font-family: var(--body-font-family);
   font-style: normal;
   font-weight: normal;
 }
@@ -844,7 +845,7 @@ var {
 .spec-lookahead::before {
   color: #666666;
   content: '[lookahead = ';
-  font-family: Cambria, "Palatino Linotype", Palatino, "Liberation Serif", serif;
+  font-family: var(--body-font-family);
   font-style: normal;
   font-weight: normal;
 }
