@@ -26,15 +26,18 @@ body {
 }
 
 article {
-  margin: 0 1rem;
+  margin: 0 auto;
 }
 
 @media (min-width: 720px) {
   body {
     margin: 6rem auto 3rem;
-    max-width: 800px;
     padding-left: 75px;
     padding-right: clamp(0px, calc((100vw - 800px) * 0.25), 75px);
+  }
+
+  article {
+    max-width: 800px;
   }
 }
 
