@@ -5,6 +5,7 @@
   function orderify(list) {
     list.ordered = true;
     for (const item of list.items) {
+      if (!item.contents || !item.contents.length) continue;
       if (item.contents[item.contents.length - 1].type === 'List') {
         orderify(item.contents[item.contents.length - 1]);
       }
