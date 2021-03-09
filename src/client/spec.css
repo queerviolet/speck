@@ -51,8 +51,7 @@ article {
   position: absolute;
   display: block;
   color: #fff;
-  --selection-background-color: #cacee0;
-  background: var(--selection-background-color);
+  background-color: #cacee0;
   border-radius: 4px;
   font-size: 36px;
   height: 23px;
@@ -84,32 +83,12 @@ article {
   width: 0;
 }
 
-@media (max-width: 719px) {
-  .outdated-selection-link:before,
-  .selection-link:before {
-    border-bottom-color: var(--selection-background-color);
-    border-top: 0;
-    right: 50%;
-    top: 1px;
-  }
-}
-
-@media (min-width: 720px) {
-  .outdated-selection-link:before,
-  .selection-link:before {
-    border-left-color: var(--selection-background-color);
-    border-right: 0;
-    right: 1px;
-    top: 50%;
-  }
-}
-
 .selection-link:hover {
-  --selection-background-color: #3b5998;
+  background-color: #3b5998;
 }
 
 .outdated-selection-link {
-  --selection-background-color: #f0babe;
+  background-color: #f0babe;
   font-size: 21px;
   font-weight: 800;
   line-height: 27px;
