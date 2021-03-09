@@ -78,16 +78,9 @@ function renderCurrentRange() {
     ? "outdated-selection-link"
     : "selection-link";
   selectionLink.innerText = currentRange.isOutdated ? "!" : "\u201F";
-  var smallScreen = window.innerWidth < 720;
-  var rect = currentRange.getBoundingClientRect();
-  if (smallScreen) {
-    selectionLink.style.left = Math.floor(rect.x + rect.width / 2 + window.scrollX - 13) + "px";
-    selectionLink.style.top = Math.floor(rect.bottom + window.scrollY + 10) + "px";
-  } else {
-    var left = article.getBoundingClientRect().x;
-    selectionLink.style.left = Math.floor(left + window.scrollX - 37) + "px";
-    selectionLink.style.top = Math.floor(rect.y + window.scrollY - 3) + "px";
-  }
+  const rect = currentRange.getClientRects()[0];
+  selectionLink.style.left = `calc(${rect.x + window.scrollX}px - 0.75em)`
+  selectionLink.style.top = `calc(${rect.y + window.scrollY}px - 0.75em)`
 }
 
 // Encodes the range of a selection on the page as a string. The string is a
@@ -139,7 +132,7 @@ function decodeRange(encoded) {
   var startPath = readList();
   var endPath = readList();
   var expectedChecksum = readInt();
-  var startOffset = startPath.pop();
+  var startOffset = startPath.pop();  
   var startNode = decodeNodePath(commonPath.concat(startPath));
   var endOffset = endPath.pop();
   var endNode = decodeNodePath(commonPath.concat(endPath));
