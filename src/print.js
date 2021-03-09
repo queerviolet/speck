@@ -702,6 +702,7 @@ function printCode(node, options) {
   return '<figure' +
       (node.id ? ' id="' + node.id + '"' : '') +
       (node.counter ? ' class="spec-counter-example"' : node.example ? ' class="spec-example"' : '') +
+      (node.definition ? ' class="spec-definition"' : '') +
     '>' +
       printFigCaption(node, options) +
       printFigBody(node, options) +
