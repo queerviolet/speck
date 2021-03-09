@@ -21,7 +21,8 @@
     "build-js": "cd src/client; for file in *.js; do terser -cm --toplevel \"$file\" > \"../generated/$file\"; done",
     "generate": "mkdir -p out && ./bin/spec-md -m spec/metadata.json README.md > out/index.html",
     "test": "node ./test/runner.js",
-    "watch": "nodemon -e css,js,json,pegjs,md --ignore src/generated --exec 'npm run build && npm test'"
+    "watch": "nodemon -e css,js,json,pegjs,md --ignore src/generated --exec 'npm run build && npm test'",
+    "postinstall": "npm i --no-save pegjs terser && npm run build"
   },
   "dependencies": {
     "graphql": "^15.5.0",
