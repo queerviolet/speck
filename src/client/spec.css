@@ -883,3 +883,11 @@ var {
 .spec-lookahead.set::after {
   content: '}]';
 }
+
+/** RFC 2119 Requirements **/
+
+.spec-requirement {
+  font-variant: small-caps;
+  text-transform: lowercase;
+  color: black;
+}

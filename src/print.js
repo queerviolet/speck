@@ -462,6 +462,13 @@ function printAll(list, options) {
         case 'Paragraph':
           return '<p>' + join(node.contents) + '</p>\n';
 
+        case 'Requirement':
+          return (
+            `<a href="${node.url}" class="spec-requirement ${node.strength}${node.negated ? ' negated' : ''}">` +
+                node.text +
+            '</a>'
+          );
+
         case 'Text':
           return formatText(node.value);
 

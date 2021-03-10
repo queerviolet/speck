@@ -268,7 +268,41 @@ paragraph = BLOCK !'#' !subsectionHeader contents:content+ {
 }
 
 escaped  = '\\' [\\`*_{}[\]()#+\-.!<>|]
-inlineEntity = inlineEdit / inlineCode / reference / bold / italic / link / image / htmlTag
+inlineEntity = inlineEdit / inlineCode / reference / bold / italic / link / image / htmlTag / requirement
+
+requirement = required / recommended / optional
+
+required = text:$('MUST' __ 'NOT' / 'MUST' / 'REQUIRED' / 'SHALL' __ 'NOT' / 'SHALL') {
+  const negated = text.endsWith('NOT')
+  return {
+    type: 'Requirement',
+    strength: 'required',
+    negated,
+    text: text,
+    url: 'https://tools.ietf.org/html/rfc2119#section-' + (negated ? 2 : 1)
+  }
+}
+
+recommended = text:$('SHOULD' __ 'NOT' / 'SHOULD' / 'RECOMMENDED' / 'NOT' __ 'RECOMMENDED') {
+  const negated = text.endsWith('NOT') || text.startsWith('NOT');
+  return {
+    type: 'Requirement',
+    strength: 'recommended',
+    negated,
+    text: text,
+    url: 'https://tools.ietf.org/html/rfc2119#section-' + (negated ? 4 : 3)
+  }
+}
+
+optional = text:$('MAY' / 'OPTIONAL') {
+  return {
+    type: 'Requirement',
+    strength: 'optional',
+    negated: false,
+    text: text,
+    url: 'https://tools.ietf.org/html/rfc2119#section-5'
+  }
+}
 
 content = inlineEntity / text
 
@@ -282,7 +316,7 @@ textChar = escaped
          / !htmlTag '<'
          / SINGLE_NL
 
-text = value:$textChar+ {
+text = value:$(!requirement textChar)+ {
   return {
     type: 'Text',
     value: unescape(value)
