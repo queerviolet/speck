@@ -464,7 +464,7 @@ function printAll(list, options) {
 
         case 'Requirement':
           return (
-            `<a href="${node.url}" class="spec-requirement ${node.strength}${node.negated ? ' negated' : ''}">` +
+            `<a href="${node.url}" class="spec-requirement${node.negated ? ' not ' : ' '}${node.strength}">` +
                 node.text +
             '</a>'
           );
