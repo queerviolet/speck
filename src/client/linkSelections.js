@@ -9,7 +9,10 @@ var currentEncodedRange;
 document.addEventListener("selectionchange", handleSelectionChange);
 window.addEventListener("resize", renderCurrentRange);
 window.addEventListener("hashchange", scrollToWindowLocation);
-window.addEventListener("load", scrollToWindowLocation);
+window.addEventListener("load", async () => {
+  await contentStabilized();
+  scrollToWindowLocation()
+});
 
 function onClickHash(event) {
   scrollToSelectionHash(new URL(event.target.href));
@@ -32,7 +35,11 @@ function scrollToSelectionHash(url) {
     20,
     Math.floor((window.innerHeight - rect.height) * 0.4)
   );
-  window.scrollTo(0, window.scrollY + rect.y - topOffset);
+  window.scrollTo({
+    left: 0,
+    top: window.scrollY + rect.y - topOffset,
+    behavior: 'smooth'
+  });
   var selection = document.getSelection();
   selection.empty();
   selection.addRange(currentRange);
@@ -207,4 +214,23 @@ function getFNVChecksum(str) {
     sum += (sum << 1) + (sum << 4) + (sum << 7) + (sum << 8) + (sum << 24);
   }
   return ((sum >> 15) ^ sum) & 0x7fff;
+}
+
+function contentStabilized(stableFor=100, timeout=200) {
+  return new Promise(resolve => {
+    setTimeout(done, timeout)
+    let timer = setTimeout(done, stableFor)
+    const observer = new MutationObserver(() => {
+      clearTimeout(timer)
+      timer = setTimeout(done, stableFor)      
+    });
+
+    observer.observe(document.getElementsByTagName('article')[0],
+      { childList: true, subtree: true });
+
+    function done() {
+      resolve()
+      observer.disconnect()
+    }
+  })
 }
