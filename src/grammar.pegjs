@@ -17,6 +17,15 @@
     return text.replace(/\\([\\`*_{}[\]()#+\-.!<>|])/g, '$1');
   }
 
+  function figureProps(kind) {
+    return {
+      diagram: kind === 'diagram',
+      example: (kind || '').endsWith('example'),
+      counter: kind === 'counter-example',
+      definition: kind === 'definition',
+    }
+  }
+
   let htmlBlockName;
 
   const BLOCK_TAGS_RX = /^(?:p|div|h[1-6]|blockquote|pre|table|dl|ol|ul|script|noscript|form|fieldset|iframe|math|ins|del)$/i;
@@ -172,13 +181,12 @@ sectionContent = note
 
 // Import
 
-importFigure = BLOCK '===' link:link _ example:('example'/'counter-example')? &( BLOCK / EOF ) {
+importFigure = BLOCK ':::[' kind:figureKind ']' url:linkUrl _ title:caption? &( BLOCK / EOF ) {
   return {
     type: 'ImportFigure',
-    path: link.url,
-    title: link.contents,
-    example: example !== null,
-    counter: example === 'counter-example'
+    path: url,
+    title: title,
+    ...figureProps(kind)    
   }
 }
 
@@ -364,26 +372,25 @@ inlineCode = '`' code:$[^`\n\r]+ '`' {
 
 caption = '--' contents:linkContent+ { return contents }
 
-blockCode = BLOCK '```' raw:('raw' WB _)? deprecatedCounterExample:'!'? lang:codeLang? _ example:('example'/'counter-example'/'definition'/'diagram')? _ title:caption? NL code:$([^`] / '`' [^`] / '``' [^`])+ '```' {
+blockCode = BLOCK '```' raw:('raw' WB _)? deprecatedCounterExample:'!'? lang:codeLang? _ kind:figureKind? _ title:caption? NL code:$([^`] / '`' [^`] / '``' [^`])+ '```' {
   // dedent codeblock by current indent level?
   if (deprecatedCounterExample) {
+    kind = 'counter-example'
     console.warn(line() + ':' + column() + ': Use of `!` is deprecated, use `counter-example` instead.');
   }
-  const counter = (example === 'counter-example' || deprecatedCounterExample !== null)
   return {
     type: 'Code',
     raw: raw !== null,
     lang: lang,
-    diagram: example === 'diagram',
-    example: counter || example === 'example',
-    counter: counter,
-    definition: example === 'definition',
     title: title,
     code: code,
+    ...figureProps(kind)
   };
 }
 
-codeLang = !('example'/'counter-example') lang:$([a-z][-a-z0-9]*) {
+figureKind = 'example'/'counter-example'/'definition'/'diagram'
+
+codeLang = !figureKind lang:$([a-z][-a-z0-9]*) {
   return lang;
 }
 
@@ -401,13 +408,15 @@ indentCodeLine = depth:LINE code:$NOT_NL+ {
 
 // Link & Image
 
-link = '[' contents:linkContent* ']' _ '(' _ url:$[^)]+ _ ')' {
+link = '[' contents:linkContent* ']' _ url:linkUrl {
   return {
     type: 'Link',
     contents: contents,
     url: url
   };
 }
+
+linkUrl = '(' _ url:$[^)]+ _ ')' { return url }
 
 linkContent = inlineEntity / linkText
 
