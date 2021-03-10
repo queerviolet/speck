@@ -504,6 +504,10 @@ figcaption {
   text-align: right;
 }
 
+figcaption code {
+  font-size: 10pt;
+}
+
 .spec-example-num {
   display: block;
   float: left;
