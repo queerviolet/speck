@@ -212,7 +212,7 @@ function assignBiblioIDs(ast, options) {
           secname = secnameStack[secnameStack.length - 1] + '.' + secname;
         }
         let id = node.definition
-          ? (defnameStack.push(anchorize(node.title)),
+          ? (defnameStack.push(anchorizeDefinition(node.title)),
             defnameStack.join('/'))
           : 'sec-' + secname;
         if (!options.biblio[id]) {
@@ -845,6 +845,11 @@ function linkTo(id, content, options) {
 
 function anchorize(title) {
   return title.replace(/[^A-Za-z0-9\-_@]+/g, '-');
+}
+
+function anchorizeDefinition(title) {
+  const [name] = title.split(':')
+  return anchorize(name)
 }
 
 function resolveLinkUrl(url, options) {
