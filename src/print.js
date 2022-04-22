@@ -253,7 +253,7 @@ function assignBiblioIDs(ast, options) {
             textContent(node.title).trim()
           );
           let id = baseId
-          for (const i = 2; options.biblio[id]; ++i) {
+          for (let i = 2; options.biblio[id]; ++i) {
             id = baseId + '-' + i
           }
           options.biblio[id] = '#' + id;
