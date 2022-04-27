@@ -213,7 +213,7 @@ function assignBiblioIDs(ast, options) {
         }
         let id = node.definition
           ? (defnameStack.push(anchorizeDefinition(node.title)),
-            defnameStack.join('/'))
+            defnameStack.join('.'))
           : 'sec-' + secname;
         if (!options.biblio[id]) {
           options.biblio[id] = '#' + id;
@@ -563,7 +563,7 @@ function printAll(list, options) {
           return (
             '<span class="spec-call">' +
               link(node, anchorize(node.name) + '()', options, true) +
-              '(' + join(node.args, ', ') + ')' +
+              (node.args ? '(' + join(node.args, ', ') + ')' : '') +
             '</span>'
           );
 
@@ -827,7 +827,7 @@ function link(node, id, options, doHighlight) {
   return (
     '<a href="' + href + '"' +
       (doHighlight ? ' data-name="' + anchorize(node.name) + '"' : '') +
-      (href[0] !== '#' ? ' target="_blank"' : '') + '>' +
+      '>' +
       content +
     '</a>'
   );
@@ -836,8 +836,7 @@ function link(node, id, options, doHighlight) {
 function linkTo(id, content, options) {
   const href = options.biblio[id];
   return (
-    '<a href="' + href + '"' +
-      (href[0] !== '#' ? ' target="_blank"' : '') + '>' +
+    `<a href="${href}">` +
       content +
     '</a>'
   );
@@ -858,15 +857,27 @@ function resolveLinkUrl(url, options) {
     if (hashIdx !== -1) {
       // Try to resolve GFM references to spec-md references.
       const hashId = url.slice(hashIdx + 1)
-      const ref = options.biblio[hashId]
-      if (ref) return ref
-      const sectionRef = options.biblio['sec-' + hashId]
-      if (sectionRef) return sectionRef
-      const callRef = options.biblio[hashId + '()']
-      if (callRef) return callRef
+      const resolved = resolveHashId(hashId, options)
+      if (resolved) return resolved      
     }
   }
   return url
+}
+
+function resolveHashId(hashId, options) {
+  const ref = options.biblio[hashId]
+  if (ref) return ref
+  const sectionRef = options.biblio['sec-' + hashId]
+  if (sectionRef) return sectionRef
+  const callRef = options.biblio[hashId + '()']
+  if (callRef) return callRef
+  const dotIdx = hashId.lastIndexOf('.')
+  if (dotIdx !== -1) {
+    const parent = hashId.slice(0, dotIdx)
+    const field = hashId.slice(dotIdx + 1)
+    const resolved = resolveHashId(parent, options)
+    if (resolved) return resolved + '.' + field
+  }
 }
 
 const ESCAPE_CODE_REGEX = /[><"'&]/g;

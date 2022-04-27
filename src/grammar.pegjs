@@ -385,7 +385,7 @@ htmlTag = tag:$('<' '/'? [a-z]+ [^>]* '>') {
 
 directive = '@' name:name {
   return {
-    type: 'Variable',
+    type: 'Call',
     name: '@' + name
   }
 }
@@ -584,7 +584,7 @@ localName = name:$(('\\_' / [_a-z]) nameRest) {
 globalName = name:$([A-Z] nameRest) {
   return unescape(name);
 }
-nameRest = $('\\_' / [_a-zA-Z0-9])*
+nameRest = $('\\_' / [_a-zA-Z0-9\.])*
 
 
 // Algorithm
