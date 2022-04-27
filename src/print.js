@@ -562,7 +562,7 @@ function printAll(list, options) {
         case 'Call':
           return (
             '<span class="spec-call">' +
-              link(node, anchorize(node.name) + '()', options, true) +
+              link(node, options, true) +
               (node.args ? '(' + join(node.args, ', ') + ')' : '') +
             '</span>'
           );
@@ -639,7 +639,7 @@ function printAll(list, options) {
               (node.isList ? ' list' : '') +
               (node.isOptional ? ' optional' : '') +
             '">' +
-              link(node, anchorize(node.name), options, true) +
+              link(node, options, true) +
               (node.params ? '<span class="spec-params">' + join(node.params) + '</span>' : '') +
             '</span>'
           );
@@ -787,7 +787,7 @@ function printIndex(ast, options) {
 
   const items = termNames.map(termName => {
     const node = terms[termName];
-    return '<li>' + link({name: termName}, node.id, options) + '</li>';
+    return '<li>' + link({ ...node, name: termName }, options) + '</li>';
   });
 
   return (
@@ -811,8 +811,8 @@ function maybe(value) {
   return value ? value : '';
 }
 
-function link(node, id, options, doHighlight) {
-  const href = options.biblio[id];
+function link(node, options, doHighlight) {
+  const href = node.id || resolveBiblio(node.name, options)
   const content = escape(node.name);
   if (!href) {
     if (doHighlight) {
@@ -857,14 +857,14 @@ function resolveLinkUrl(url, options) {
     if (hashIdx !== -1) {
       // Try to resolve GFM references to spec-md references.
       const hashId = url.slice(hashIdx + 1)
-      const resolved = resolveHashId(hashId, options)
+      const resolved = resolveBiblio(hashId, options)
       if (resolved) return resolved      
     }
   }
   return url
 }
 
-function resolveHashId(hashId, options) {
+function resolveBiblio(hashId, options) {
   const ref = options.biblio[hashId]
   if (ref) return ref
   const sectionRef = options.biblio['sec-' + hashId]
@@ -875,7 +875,7 @@ function resolveHashId(hashId, options) {
   if (dotIdx !== -1) {
     const parent = hashId.slice(0, dotIdx)
     const field = hashId.slice(dotIdx + 1)
-    const resolved = resolveHashId(parent, options)
+    const resolved = resolveBiblio(parent, options)
     if (resolved) return resolved + '.' + field
   }
 }
