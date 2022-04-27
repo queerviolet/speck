@@ -741,37 +741,57 @@ function printFigBody(node, options) {
   '</code></pre>\n'
 }
 
-function getTerms(ast) {
-  const terms = {};
-  const sectionIDs = [];
-  visit(ast, {
-    enter(node) {
-      if (node.type === 'Section') {
-        sectionIDs.push(node.secID);
+const getTerms = require('@protoplasm/recall').default (
+  function getTerms(ast) {
+    const terms = {};
+    const sectionIDs = [];
+    // visit(ast, {
+    //   enter(node) {
+    //     if (node.type === 'Section') {
+    //       sectionIDs.push(node.secID);
+    //     }
+    //     // Do not include terms defined in an appendix.
+    //     if (IS_LETTER_RX.test(sectionIDs[0])) {
+    //       return;
+    //     }
+    //     if (node.type === 'Algorithm') {
+    //       const algorithmName = node.call.name;
+    //       if (!terms[algorithmName]) {
+    //         terms[algorithmName] = node;
+    //       }
+    //     } else if (node.type === 'Production' || node.type === 'OneOfProduction') {
+    //       const productionName = node.token.name;
+    //       if (!terms[productionName]) {
+    //         terms[productionName] = node;
+    //       }
+    //     }
+    //   },
+    //   leave(node) {
+    //     if (node.type === 'Section') {
+    //       sectionIDs.pop();
+    //     }
+    //   }
+    // });
+    visit(ast, {
+      enter(node) {
+        const term = getTerm(node)
+        if (!term || terms[term] || !node.id) return
+        terms[term] = { ...node, name: term }
       }
-      // Do not include terms defined in an appendix.
-      if (IS_LETTER_RX.test(sectionIDs[0])) {
-        return;
-      }
-      if (node.type === 'Algorithm') {
-        const algorithmName = node.call.name;
-        if (!terms[algorithmName]) {
-          terms[algorithmName] = node;
-        }
-      } else if (node.type === 'Production' || node.type === 'OneOfProduction') {
-        const productionName = node.token.name;
-        if (!terms[productionName]) {
-          terms[productionName] = node;
-        }
-      }
-    },
-    leave(node) {
-      if (node.type === 'Section') {
-        sectionIDs.pop();
-      }
-    }
-  });
-  return terms;
+    })
+    return terms;
+  }
+)
+
+function getTerm(node) {
+  switch (node.type) {
+    case 'Algorithm': return node.call.name
+    case 'Production':
+    case 'OneOfProduction':
+        return node.token.name
+    case 'Section':
+      if (node.definition) return node.id
+  }
 }
 
 function hasIndex(ast, options) {
@@ -787,7 +807,7 @@ function printIndex(ast, options) {
 
   const items = termNames.map(termName => {
     const node = terms[termName];
-    return '<li>' + link({ ...node, name: termName }, options) + '</li>';
+    return '<li>' + link(node, options) + '</li>';
   });
 
   return (
@@ -812,7 +832,10 @@ function maybe(value) {
 }
 
 function link(node, options, doHighlight) {
-  const href = node.id || resolveBiblio(node.name, options)
+  const href = node.id ? '#' + node.id :
+    resolveBiblio(node.id, options) ||
+    resolveBiblio(node.name, options) ||
+    resolveBiblio(node.title, options)
   const content = escape(node.name);
   if (!href) {
     if (doHighlight) {
@@ -865,6 +888,7 @@ function resolveLinkUrl(url, options) {
 }
 
 function resolveBiblio(hashId, options) {
+  if (!hashId) return
   const ref = options.biblio[hashId]
   if (ref) return ref
   const sectionRef = options.biblio['sec-' + hashId]

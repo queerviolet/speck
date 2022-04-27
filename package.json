@@ -25,9 +25,10 @@
     "postinstall": "npm run build"
   },
   "dependencies": {
+    "@protoplasm/recall": "^0.2.4",
     "graphql": "^15.5.0",
-    "prismjs": "^1.23.0",
     "pegjs": "~0.8.0",
+    "prismjs": "^1.23.0",
     "terser": "5.5.1"
   },
   "devDependencies": {
